@@ -3,7 +3,11 @@
 {% load i18n %}
 <div class="w-full p-8">
   <h1 class="flex items-center text-2xl text-base-content font-bold mb-4">{% trans 'Open Tickets' %}
-    {% if request.user.team_set.all %}
+    {% comment %} Print team names {% endcomment %}
+    {% if request.user.is_superuser %}
+    {% trans 'for' %}:
+      <span class="ml-2 badge badge-accent">{% trans 'Admin' %}</span>
+    {% elif request.user.team_set.all %}
     {% trans 'for' %}:
     {% for team in request.user.team_set.all %}
       <span class="ml-2 badge badge-neutral">{{ team.name }}</span>
@@ -28,7 +32,7 @@
       </tr>
       {% endif %}
       {% for ticket in tickets %}
-      <tr>
+      <a href="{% url 'ticket_detail' ticket.id %}" class=""><tr>
         <td><span class="badge badge-neutral">#{{ ticket.id }}</span></td>
         <td>{{ ticket.title }}</td>
         <td>
@@ -47,7 +51,7 @@
           {% include 'partials/ticket_status_badge.html' with ticket=ticket %}
         </td>
         <td class="flex justify-end"><a href="{% url 'ticket_detail' ticket.id %}" class="btn btn-xs btn-accent">{% trans 'View' %}</a></td>
-      </tr>
+      </tr></a>
         {% endfor %}
     </tbody>
   </table>
